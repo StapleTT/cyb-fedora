@@ -387,6 +387,8 @@ ok "Ctrl+Alt+T shortcut added."
 info "Installing rustup..."
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 source "$HOME/.cargo/env"
+info "Installing build dependencies..."
+sudo dnf install -y gcc
 info "Installing eza..."
 cargo install eza
 ok "Rust toolchain and eza installed."
