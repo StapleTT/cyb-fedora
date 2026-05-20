@@ -21,9 +21,8 @@ printf '\e[1;37m  Fedora 44 lab setup — select a module to install:\e[0m\n'
 echo
 printf '  \e[1;32m[1]\e[0m  Quality of Life      — fish, nvim, starship, fonts, shortcuts\n'
 printf '  \e[1;32m[2]\e[0m  Alfa Wi-Fi driver    — RTL8812AU (aircrack-ng fork, kernel 6.x patches)\n'
-printf '  \e[1;32m[3]\e[0m  Hashcat / NVIDIA     — open driver (Blackwell), CUDA toolkit, hashcat\n'
-printf '  \e[1;32m[4]\e[0m  Cybersecurity tools  — Kali-equivalent toolset for Fedora\n'
-printf '  \e[1;32m[5]\e[0m  All of the above\n'
+printf '  \e[1;32m[3]\e[0m  Cybersecurity tools  — Kali-equivalent toolset for Fedora\n'
+printf '  \e[1;32m[4]\e[0m  All of the above\n'
 printf '  \e[1;31m[q]\e[0m  Quit\n'
 echo
 printf '  Choice: '
@@ -42,12 +41,10 @@ run() {
 case "$choice" in
     1) run "$SCRIPT_DIR/qol/qol.sh" ;;
     2) run "$SCRIPT_DIR/alfa/alfa.sh" ;;
-    3) run "$SCRIPT_DIR/hashcat/hashcat.sh" ;;
-    4) run "$SCRIPT_DIR/cyb/cyb.sh" ;;
-    5)
+    3) run "$SCRIPT_DIR/cyb/cyb.sh" ;;
+    4)
         run "$SCRIPT_DIR/qol/qol.sh"
         run "$SCRIPT_DIR/alfa/alfa.sh"
-        run "$SCRIPT_DIR/hashcat/hashcat.sh"
         run "$SCRIPT_DIR/cyb/cyb.sh"
         ;;
     q|Q) echo "Bye." ; exit 0 ;;

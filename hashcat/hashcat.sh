@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# WIP — not yet included in install.sh; CUDA toolkit install on Fedora still
+# needs validation (cuda-toolkit metapackage requires Java via cuda-visual-tools).
 set -euo pipefail
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -79,7 +81,7 @@ fi
 # ── Install NVIDIA driver (RPM Fusion only, CUDA repo disabled) ───────────────
 info "Installing $NVIDIA_PKG from RPM Fusion..."
 sudo dnf install -y \
-    --disablerepo='cuda-*' \
+    --exclude='kernel,kernel-core,kernel-modules,kernel-modules-core,kernel-modules-extra' \
     "$NVIDIA_PKG" xorg-x11-drv-nvidia-cuda
 
 # ── Wait for kernel module to finish building ─────────────────────────────────
@@ -108,9 +110,21 @@ if [[ ! -f /etc/yum.repos.d/cuda-rhel9.repo ]]; then
 fi
 
 info "Installing CUDA toolkit (from CUDA repo only)..."
+# 'cuda-toolkit' pulls in cuda-visual-tools → cuda-nsight/nvvp → jre, which is
+# not available on Fedora. Install individual components instead: compiler,
+# runtime headers, and GPU libraries — everything hashcat and CUDA dev need.
+CUDA_SLOT=$(sudo dnf list available --disablerepo='*' --enablerepo='cuda-rhel9-x86_64' \
+    'cuda-nvcc-*' 2>/dev/null \
+    | awk '/^cuda-nvcc-/{print $1}' \
+    | grep -oP '(?<=cuda-nvcc-)\d+-\d+' \
+    | sort -t- -k1,1n -k2,2n | tail -1)
+[[ -z "$CUDA_SLOT" ]] && die "Could not find any cuda-nvcc package in the CUDA repo."
+info "Installing CUDA $CUDA_SLOT components..."
 sudo dnf install -y --nogpgcheck \
     --disablerepo='*' --enablerepo='cuda-rhel9-x86_64' \
-    cuda-toolkit
+    "cuda-nvcc-${CUDA_SLOT}" \
+    "cuda-cudart-devel-${CUDA_SLOT}" \
+    "cuda-libraries-${CUDA_SLOT}"
 
 # Keep the CUDA repo disabled after install so it can't interfere with future
 # NVIDIA driver updates coming from RPM Fusion.
@@ -120,6 +134,17 @@ ok "CUDA repo disabled (re-enable manually if you need to update the toolkit)."
 # ── hashcat ───────────────────────────────────────────────────────────────────
 info "Installing hashcat..."
 sudo dnf install -y hashcat
+
+# ── Pin current kernel as GRUB default ───────────────────────────────────────
+# akmod-nvidia may pull in a newer kernel; ensure the running kernel boots next.
+CURRENT_VMLINUZ="/boot/vmlinuz-$(uname -r)"
+if [[ -f "$CURRENT_VMLINUZ" ]]; then
+    info "Pinning $(uname -r) as GRUB default..."
+    sudo grubby --set-default "$CURRENT_VMLINUZ"
+    ok "GRUB default set to $(uname -r)."
+else
+    warn "Could not find $CURRENT_VMLINUZ — verify GRUB default manually with: grubby --default-kernel"
+fi
 
 ok "All done! Reboot to load the NVIDIA driver."
 ok "After rebooting, verify with:"
