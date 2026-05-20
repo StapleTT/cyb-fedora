@@ -136,7 +136,7 @@ clone_or_update "https://github.com/swisskyrepo/PayloadsAllTheThings" "$TOOLS_DI
 # exploitdb / searchsploit
 clone_or_update "https://gitlab.com/exploit-database/exploitdb" "$TOOLS_DIR/exploitdb"
 sudo ln -sf "$TOOLS_DIR/exploitdb/searchsploit" /usr/local/bin/searchsploit 2>/dev/null || true
-mkdir -p ~/.searchsploit_rc
+[[ -d ~/.searchsploit_rc ]] && rm -rf ~/.searchsploit_rc
 cat > ~/.searchsploit_rc << EOF
 EXPLOIT_DB_PATH=$TOOLS_DIR/exploitdb
 EOF
