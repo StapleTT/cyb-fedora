@@ -82,7 +82,7 @@ sudo dnf install -y openvpn tor
 # -- Build deps and Python toolchain ------------------------------------------
 info "Installing build dependencies..."
 sudo dnf install -y \
-    python3-pip python3-devel python3-pipx \
+    python3-pip python3-devel pipx \
     openssl-devel libffi-devel gcc make \
     perl perl-Net-SSLeay perl-LWP-Protocol-https \
     git curl wget ruby ruby-devel
