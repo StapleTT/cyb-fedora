@@ -364,6 +364,11 @@ gsettings set org.gnome.Ptyxis use-system-font false
 gsettings set org.gnome.Ptyxis font-name 'Adwaita Mono Regular 11'
 ok "Terminal font updated."
 
+# ── Ptyxis session restore ────────────────────────────────────────────────────
+info "Disabling Ptyxis session restore..."
+gsettings set org.gnome.Ptyxis restore-session false
+ok "Ptyxis session restore disabled."
+
 # ── GNOME shortcut: Ctrl+Alt+T → ptyxis ──────────────────────────────────────
 info "Adding Ctrl+Alt+T → terminal shortcut..."
 BINDING_PATH='/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/'
