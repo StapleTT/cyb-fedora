@@ -9,8 +9,8 @@ die()   { printf '\e[1;31m[qol]\e[0m %s\n' "$*" >&2; exit 1; }
 [[ $EUID -eq 0 ]] && die "Run as a normal user, not root."
 
 # ── packages ─────────────────────────────────────────────────────────────────
-info "Installing fish and neovim..."
-sudo dnf install -y fish neovim unzip
+info "Installing fish, neovim, and gnome-tweaks..."
+sudo dnf install -y fish neovim unzip gnome-tweaks
 
 # ── embedded dotfiles (base64-encoded tar.gz archives) ───────────────────────
 FISH_B64="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"
@@ -387,6 +387,11 @@ gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"$B
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:"$BINDING_PATH" \
     binding '<Control><Alt>t'
 ok "Ctrl+Alt+T shortcut added."
+
+# ── GNOME window buttons ──────────────────────────────────────────────────────
+info "Enabling minimize and maximize window buttons..."
+gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,close'
+ok "Window buttons enabled."
 
 # ── rustup + cargo + eza ──────────────────────────────────────────────────────
 info "Installing rustup..."
