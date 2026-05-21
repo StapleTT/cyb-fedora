@@ -25,4 +25,4 @@ Select a module number at the prompt, or `4` to run all three in order.
 - Run as a normal user, not root. Scripts will call `sudo` where needed.
 - Module 2 requires the kernel headers for your running kernel (`kernel-devel-$(uname -r)`).
 - Module 3 installs Rust tools via cargo -- run module 1 first if you want feroxbuster and rustscan.
-- `hashcat/hashcat.sh` is a standalone script for NVIDIA driver + CUDA + hashcat setup. It is not included in the installer yet and must be run manually.
+- `hashcat/hashcat.sh` is a standalone script for NVIDIA driver + CUDA + hashcat setup. It is not included in the installer yet and must be run manually (spoiler alert: it's broken. Will probably break your system).
