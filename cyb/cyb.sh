@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# ── helpers ───────────────────────────────────────────────────────────────────
 info()  { printf '\e[1;34m[cyb]\e[0m %s\n' "$*"; }
 ok()    { printf '\e[1;32m[cyb]\e[0m %s\n' "$*"; }
 warn()  { printf '\e[1;33m[cyb]\e[0m %s\n' "$*"; }
@@ -24,16 +23,12 @@ clone_or_update() {
     fi
 }
 
-# ── RPM Fusion (free + nonfree) ───────────────────────────────────────────────
 info "Enabling RPM Fusion free and nonfree..."
 sudo dnf install -y \
     "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
     "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm" \
     2>/dev/null || true
 
-# ── DNF packages ──────────────────────────────────────────────────────────────
-
-# -- Reconnaissance & scanning ------------------------------------------------
 info "Installing reconnaissance and scanning tools..."
 sudo dnf install -y \
     nmap nmap-ncat masscan \
@@ -41,45 +36,37 @@ sudo dnf install -y \
     gobuster ffuf whatweb \
     proxychains-ng
 
-# -- Web & application testing ------------------------------------------------
 info "Installing web testing tools..."
 sudo dnf install -y \
     wireshark wireshark-cli tcpdump socat netcat
 
-# -- SMB / Active Directory ---------------------------------------------------
 info "Installing SMB/AD tools..."
 sudo dnf install -y \
     samba-client \
     ldap-utils 2>/dev/null || \
 sudo dnf install -y samba-client
 
-# -- Password attacks ----------------------------------------------------------
 info "Installing password attack tools..."
 sudo dnf install -y \
     hydra medusa ncrack \
     john pdfcrack steghide
 
-# -- Wireless -----------------------------------------------------------------
 info "Installing wireless tools..."
 sudo dnf install -y aircrack-ng
 
-# -- Forensics & steganography ------------------------------------------------
 info "Installing forensics tools..."
 sudo dnf install -y \
     binwalk foremost sleuthkit \
     perl-Image-ExifTool \
     hexedit bless ghex
 
-# -- Reverse engineering & debugging ------------------------------------------
 info "Installing reverse engineering tools..."
 sudo dnf install -y \
     radare2 gdb strace ltrace
 
-# -- Tunneling & anonymity ----------------------------------------------------
 info "Installing tunneling and anonymity tools..."
 sudo dnf install -y openvpn tor
 
-# -- Build deps and Python toolchain ------------------------------------------
 info "Installing build dependencies..."
 sudo dnf install -y \
     python3-pip python3-devel pipx \
@@ -87,7 +74,6 @@ sudo dnf install -y \
     perl perl-Net-SSLeay perl-LWP-Protocol-https \
     git curl wget ruby ruby-devel
 
-# ── pipx tools (Python CLI) ───────────────────────────────────────────────────
 info "Installing Python security tools via pipx..."
 
 pipx_install() {
@@ -103,7 +89,6 @@ pipx_install certipy-ad
 pipx_install netexec
 pipx_install "git+https://github.com/laramies/theHarvester"
 
-# ── Cargo tools (Rust) ────────────────────────────────────────────────────────
 if command -v cargo &>/dev/null; then
     info "Installing Rust security tools via cargo..."
     cargo install feroxbuster 2>/dev/null || warn "feroxbuster install failed"
@@ -113,7 +98,6 @@ else
     warn "Run qol/qol.sh first to install rustup, then re-run this script."
 fi
 
-# ── Git-cloned tools → /opt/sectools ─────────────────────────────────────────
 info "Cloning tools into $TOOLS_DIR..."
 
 # nikto (Perl web scanner, not in Fedora repos)
@@ -141,12 +125,10 @@ cat > ~/.searchsploit_rc << EOF
 EXPLOIT_DB_PATH=$TOOLS_DIR/exploitdb
 EOF
 
-# ── Wordlists ─────────────────────────────────────────────────────────────────
 info "Cloning SecLists (this is ~1.8 GB, please wait)..."
 clone_or_update "https://github.com/danielmiessler/SecLists" "$TOOLS_DIR/SecLists"
 sudo ln -sfn "$TOOLS_DIR/SecLists" /usr/share/seclists 2>/dev/null || true
 
-# rockyou.txt (extract if not already present)
 ROCKYOU="/usr/share/wordlists/rockyou.txt"
 if [[ ! -f "$ROCKYOU" ]]; then
     info "Installing rockyou.txt..."
@@ -155,7 +137,6 @@ if [[ ! -f "$ROCKYOU" ]]; then
         | sudo tee "$ROCKYOU" > /dev/null
 fi
 
-# ── Symlinks for convenience ──────────────────────────────────────────────────
 sudo ln -sfn "$TOOLS_DIR" /opt/sectools 2>/dev/null || true
 
 ok "──────────────────────────────────────────────"

@@ -3,7 +3,6 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# ── helpers ───────────────────────────────────────────────────────────────────
 clear
 printf '\e[1;36m'
 cat << 'BANNER'
