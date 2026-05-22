@@ -8,7 +8,7 @@ die()   { printf '\e[1;31m[alfa]\e[0m %s\n' "$*" >&2; exit 1; }
 [[ $EUID -eq 0 ]] && die "Run as a normal user, not root."
 
 info "Installing build dependencies..."
-sudo dnf install -y git dkms "kernel-devel-$(uname -r)" gcc make
+sudo dnf install -y --exclude=kernel git dkms "kernel-devel-$(uname -r)" gcc make
 
 DRIVER_TMP=$(mktemp -d)
 trap 'rm -rf "$DRIVER_TMP"' EXIT

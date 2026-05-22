@@ -7,6 +7,11 @@ die()   { printf '\e[1;31m[qol]\e[0m %s\n' "$*" >&2; exit 1; }
 
 [[ $EUID -eq 0 ]] && die "Run as a normal user, not root."
 
+info "Setting GRUB timeout to 2 seconds..."
+sudo sed -i 's/^GRUB_TIMEOUT=.*/GRUB_TIMEOUT=2/' /etc/default/grub
+sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+ok "GRUB timeout set."
+
 info "Installing fish, neovim, and gnome-tweaks..."
 sudo dnf install -y fish neovim unzip gnome-tweaks
 
